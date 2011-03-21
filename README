@@ -1,0 +1,33 @@
+Neatworks to Quicken README
+===========================
+Creator: Eric Melz
+Created: March 20, 2011
+
+Overview
+========
+This software provides a utility to transfer Neatworks receipts to Quicken Essentials for Mac.
+A video demoing this software is on youtube at http://www.youtube.com/watch?v=tKKC01CQehk.
+It has been developed on a Mac with OSX 10.6.6.
+This software is provided as-is with no warranties.
+
+Installation
+============
+Unpack this zip file.
+
+Running
+=======
+ * Cd to dist/bin
+ * execute:
+   > transfer
+
+Building the Sources
+====================
+ * Navigate to the same directory as this README
+ * execute:
+   > gradlew clean dist
+
+Contact
+=======
+This project is hosted on github at https://github.com/ericmelz/NeatQuick.
+File any known issues on the tracking system or create Wiki pages.  You can also contact
+me via email at eric@emelz.com

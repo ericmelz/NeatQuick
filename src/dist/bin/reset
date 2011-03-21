@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# For testing... reset database to initial state
+cp /Users/eric/Documents/Quicken\ Experiments/Quicken\ One\ Transaction.quickendata/data.afterOneTransaction /Users/eric/Documents/Quicken\ Experiments/Quicken\ One\ Transaction.quickendata/data
