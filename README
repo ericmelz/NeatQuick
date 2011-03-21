@@ -14,17 +14,15 @@ Installation
 ============
 Unpack this zip file.
 
-Running
-=======
- * Cd to dist/bin
- * execute:
-   > transfer
-
-Building the Sources
-====================
+Building and Running
+=====================
+ * Edit the NEAT_DATA_DIR and QUICKEN_DATA_DIR constants in src/main/groovy/com/emelz/transfer/Launcher.java
  * Navigate to the same directory as this README
  * execute:
-   > gradlew clean dist
+   $ ./gradlew clean dist
+ * Cd to build/dist/bin
+ * execute:
+   $ ./transfer
 
 Contact
 =======
