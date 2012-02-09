@@ -25,10 +25,16 @@ import java.net.URLClassLoader;
  * @author Eric Melz
  */
 class Launcher {
-    public static final String NEAT_DATA_DIR = "/Users/eric/Documents/Neat Library.nrmlib";
-    public static final String QUICKEN_DATA_DIR = "/Users/eric/Documents/Quicken Experiments/Quicken One Transaction.quickendata";
+    //   public static final String NEAT_DATA_DIR = "/Users/eric/Documents/NeatQuick/sample_data/NeatDocs_2011_09_18.nrmlib";
+    //   public static final String QUICKEN_DATA_DIR = "/Users/eric/Documents/NeatQuick/sample_data/Empty.quickendata";
+    public static final String NEAT_DATA_DIR = null;
+    public static final String QUICKEN_DATA_DIR = null;
+    public static final Integer LIMIT = null;  // null means no limit
+    //    public static final Integer LIMIT = new Integer(10);  // For testing, can limit # of neat transctions to, say, 10
     public static void main(String[] args) throws Exception {
+        if (NEAT_DATA_DIR == null || QUICKEN_DATA_DIR == null)
+            throw new IllegalArgumentException("You must set NEAT_DATA_DIR and QUICKEN_DATA_DIR.  See README for details");
         TransferUtil tu = new TransferUtil(NEAT_DATA_DIR, QUICKEN_DATA_DIR);
-        tu.doTransfer(null);
+        tu.doTransfer(LIMIT);
     }
 }

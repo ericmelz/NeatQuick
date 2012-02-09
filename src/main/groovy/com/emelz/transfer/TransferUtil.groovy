@@ -23,10 +23,21 @@ import groovy.sql.Sql
  * @author Eric Melz
  */
 class TransferUtil {
+    def debug = true
     def quickenDataDir
     def neatDataDir
     def nids = new HashSet()
-    def labelToFieldId = 
+    def importantLabels =
+      [ 'Vendor',
+	'Date',
+	'Amount',
+	'Payment Type',
+	'Category',
+	'Sales Tax',
+	'Personal',
+	'Notes']
+    def labelToFieldId =  [:]
+    /*
         [ 'Vendor' : 66,
           'Date' : 4,
           'Amount' : 25,
@@ -35,6 +46,7 @@ class TransferUtil {
           'Sales Tax' : 16,
           'Personal' : 32,
           'Notes' : 64 ]
+*/
     def labelToType = 
         [ 'Vendor' : 'String', 
           'Date' : 'Timestamp',
@@ -221,7 +233,7 @@ class TransferUtil {
         bumpPk('Transaction')
         bumpPk('CashFlowTransactionEntry')
     
-        addAttachment("/Users/eric/Documents/Neat Library.nrmlib/${pdf}.pdf", max)
+        addAttachment("${this.neatDataDir}/${pdf}.pdf", max)
     }
 
 
@@ -271,14 +283,18 @@ class TransferUtil {
 
 
     def gatherItems(limit) {
+        if (debug)  println "Gathering items, limit=$limit"
         def items = [:]
         def limitClause = ''
         if (limit) limitClause = "limit $limit"
-        def itemTuples = execQuery('neat', "select i.Z_PK, i.ZNEATPDFNAME from ZNRMBASEITEM as i, ZNRMFIELD as a where i.Z_PK = a.ZFIELDSET and a.ZATTRIBUTES=17 and i.ZCLASSNAME like '%eceipt' $limitClause", ["Int", "String"])
+	//        def itemTuples = execQuery('neat', "select i.Z_PK, i.ZNEATPDFNAME from ZNRMBASEITEM as i, ZNRMFIELD as a where i.Z_PK = a.ZFIELDSET and a.ZATTRIBUTES=17 and i.ZCLASSNAME like '%eceipt' $limitClause", ["Int", "String"])
+        def itemTuples = execQuery('neat', "select distinct i.Z_PK, i.ZNEATPDFNAME from ZNRMBASEITEM as i, ZNRMFIELD as a where i.Z_PK = a.ZFIELDSET and i.ZCLASSNAME like '%eceipt' $limitClause", ["Int", "String"])
+        if (debug) println "Retrieved ${itemTuples.size} tuples from neat query"
         itemTuples.each {
            def id, pdf
            ( id, pdf ) = it
-           print '.'
+           if (debug) println "  id=$id, pdf=$pdf"
+           else print '.'
            def query = "select Z_PK from ZNRMFIELDSET where ZITEM=$id"
            def values = execQuery('neat', query, [ 'Int' ])
            def fieldsetId = values ? values[0][0] : null
@@ -392,14 +408,33 @@ class TransferUtil {
         }
     }
 
+    def buildLabelToFields() { 
+        def rows = execQuery('neat', 'select Z_PK, ZLABEL from ZNRMFIELDATTRIBUTES', ["Int", "String"])
+        rows.each { 
+            if (it[1] in importantLabels)
+                labelToFieldId[it[1]] = it[0];
+        }
+        if (debug) { 
+            println "labelToFieldId:"
+            labelToFieldId.each { k, v ->
+                println "  $k=$v"
+	    }
+        }
+    }
+
+    def init() { 
+        buildLabelToFields()
+    }
 
     /**
       * Main method
       */
     def doTransfer(limit) {
-        println 'Gathering quicken nids...'
+        println "Initializing..."
+        init()
+        println 'Gathering Quicken nids...'
         gatherNids()
-        print 'Gathering neat items...'
+        print 'Gathering Neatworks items...'
         def neatItems = gatherItems(limit)
         println 'Creating transactions...'
         neatItems.each { k, v -> addCashTransactionForNeatItem(v) }

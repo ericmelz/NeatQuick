@@ -18,12 +18,11 @@ Unpack this zip file.
 Building and Running
 =====================
  * Edit the NEAT_DATA_DIR and QUICKEN_DATA_DIR constants in src/main/groovy/com/emelz/transfer/Launcher.java
+   to point to your Neatworks and Quicken data.
  * Navigate to the same directory as this README
  * execute:
    $ ./gradlew clean dist
- * Cd to build/dist/bin
- * execute:
-   $ ./transfer
+   $ build/dist/bin/transfer
 
 Contact
 =======
